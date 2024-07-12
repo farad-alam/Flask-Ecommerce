@@ -40,7 +40,9 @@ login_manager = LoginManager(app)
 
 from ecommerce.home.routes import home_bp
 from ecommerce.users.routes import user_bp
+from ecommerce.products.routes import products_bp
 
 app.register_blueprint(home_bp)
 app.register_blueprint(user_bp)
+app.register_blueprint(products_bp)
 

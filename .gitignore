@@ -1,2 +1,4 @@
 venv/
 src/.env
+src/instance/
+src/ecommerce/static

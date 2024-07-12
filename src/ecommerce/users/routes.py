@@ -28,7 +28,7 @@ def user_register():
             last_name = form.last_name.data,
             username=form.username.data,
             email=form.email.data,
-            password=hex_password
+            password=hex_password,
         )
 
         db.session.add(new_user)
