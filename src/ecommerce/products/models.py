@@ -54,6 +54,7 @@ class Products(db.Model, UserMixin):
             filename = secure_filename(image_file.filename)
             file_ext = os.path.splitext(filename)[1]
             unique_filename = str(uuid.uuid4()) + file_ext
+            # filepath = os.path.join(unique_filename)
             filepath = os.path.join(directory, unique_filename)
 
             # Process the image
@@ -62,6 +63,7 @@ class Products(db.Model, UserMixin):
             img = img.resize(output_size)  # Resize image to the exact size
             img.save(filepath, optimize=True, quality=85)
 
+           # self.image = url_for(unique_filename)
             self.image = url_for('static', filename='product/images/' + unique_filename)
         else:
             self.image = url_for('static', filename='product/images/default-product-img.jpg')
@@ -79,7 +81,26 @@ event.listen(Products, 'before_update', generate_product_slug)
 
 
 
+# CART MODELS ---------------------->>>
 
+class CartItem(db.Model, UserMixin):
+    id = db.Column(db.Integer, primary_key=True)
+    product_id = db.Column(db.Integer, db.ForeignKey('products.id'), nullable=False)
+    product = db.relationship('Products', backref=db.backref('cart_items', lazy=True))
+    quantity = db.Column(db.Integer, default=1)
+    created_at = db.Column(db.DateTime, default=datetime.now)
+    cart_id = db.Column(db.Integer, db.ForeignKey('cart.id'), nullable=False)
+
+class Cart(db.Model, UserMixin):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)  
+    user = db.relationship('User', backref=db.backref('cart', lazy=True))
+    items = db.relationship('CartItem', backref='cart', lazy=True, cascade="all, delete-orphan")
+    created_at = db.Column(db.DateTime, default=datetime.now)
+    updated_at = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)
+
+    def get_total_price(self):
+        return sum(item.product.price * item.quantity for item in self.items)
 
     
 
