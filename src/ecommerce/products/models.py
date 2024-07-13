@@ -91,6 +91,9 @@ class CartItem(db.Model, UserMixin):
     created_at = db.Column(db.DateTime, default=datetime.now)
     cart_id = db.Column(db.Integer, db.ForeignKey('cart.id'), nullable=False)
 
+    def get_cart_item_total_price(self):
+        return self.quantity * self.product.price
+
 class Cart(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)  
@@ -99,7 +102,7 @@ class Cart(db.Model, UserMixin):
     created_at = db.Column(db.DateTime, default=datetime.now)
     updated_at = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)
 
-    def get_total_price(self):
+    def get_cart_total_price(self):
         return sum(item.product.price * item.quantity for item in self.items)
 
     

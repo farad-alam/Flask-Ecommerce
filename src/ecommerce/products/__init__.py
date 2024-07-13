@@ -44,7 +44,7 @@ class ProductsModelView(ModelView):
 
 
 class CartModelView(ModelView):
-    form_excluded_columns = ['created_at','updated_at','items']
+    form_excluded_columns = ['created_at','updated_at',]
         
     # This will be called to generate a list of user
     def user_query():
@@ -85,10 +85,10 @@ class CartItemModelView(ModelView):
     def cart_query():
         return Cart.query
     
-        # Add a QuerySelectField to the form 
+    # Add a QuerySelectField to the form 
     form_extra_fields = {
         'product': QuerySelectField('Product', query_factory=product_query, allow_blank=False, get_label='title'),
-        'cart': QuerySelectField('Cart', query_factory=cart_query, allow_blank=False, get_label='id')
+        'cart': QuerySelectField('Cart', query_factory=cart_query, allow_blank=False, get_label='user.username')
     }
 
     # For CartItem
