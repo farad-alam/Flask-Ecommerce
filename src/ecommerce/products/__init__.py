@@ -37,6 +37,7 @@ class ProductsModelView(ModelView):
     def update_model(self, form, model):
         form.populate_obj(model)
         model.save_image(form.image.data)
+        model.save_image(form.image.data)
         self.session.commit()
         return model
 

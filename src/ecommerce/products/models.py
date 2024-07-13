@@ -8,7 +8,7 @@ from PIL import Image
 from flask import url_for, current_app
 from werkzeug.utils import secure_filename
 import uuid
-
+from werkzeug.datastructures import FileStorage
 
 
 # CATEGORIES MODEL ------------------>>>
@@ -42,9 +42,11 @@ class Products(db.Model, UserMixin):
     category = db.relationship('Categories', backref=db.backref('products', lazy=True))
     slug = db.Column(db.String(255), nullable=False, unique=True)
     created_at =  db.Column(db.DateTime, default=datetime.now)
+    updated_at = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)
 
     def save_image(self, image_file):
-        if image_file:
+
+        if isinstance(image_file, FileStorage) and image_file.filename != '':
             # Ensure the directory exists
             directory = os.path.join(current_app.root_path, 'static/product/images')
             if not os.path.exists(directory):
@@ -54,20 +56,18 @@ class Products(db.Model, UserMixin):
             filename = secure_filename(image_file.filename)
             file_ext = os.path.splitext(filename)[1]
             unique_filename = str(uuid.uuid4()) + file_ext
-            # filepath = os.path.join(unique_filename)
             filepath = os.path.join(directory, unique_filename)
 
-            # Process the image
+            # Compress and save the image
             output_size = (300, 300)
             img = Image.open(image_file)
-            img = img.resize(output_size)  # Resize image to the exact size
+            img.thumbnail(output_size)
             img.save(filepath, optimize=True, quality=85)
-
-           # self.image = url_for(unique_filename)
             self.image = url_for('static', filename='product/images/' + unique_filename)
+        elif isinstance(image_file, str) and image_file:  # When editing, keep the existing image
+            self.image = image_file
         else:
             self.image = url_for('static', filename='product/images/default-product-img.jpg')
-
 
 # A function to generate a slug from the title
 def generate_product_slug(mapper, connection, target):

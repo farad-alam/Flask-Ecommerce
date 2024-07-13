@@ -5,7 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_mail import Mail
 from dotenv import load_dotenv
 import os
-
+from flask_migrate import Migrate
 
 
 app = Flask(__name__)
@@ -26,15 +26,13 @@ app.config['FLASK_ADMIN_SWATCH'] = 'darkly'
 
 
 
-
-
 admin = Admin(app, name='E-commerce', template_mode='bootstrap3')
 
 # Extensions
 db = SQLAlchemy(app)
 mail = Mail(app)
 login_manager = LoginManager(app)
-
+migrate = Migrate(app, db)
 
 
 
