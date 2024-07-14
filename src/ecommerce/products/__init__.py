@@ -1,6 +1,6 @@
 from flask_admin.contrib.sqla import ModelView
 from ecommerce import admin, db
-from .models import Categories, Products, CartItem, Cart
+from .models import Categories, Products, CartItem, Cart, PlacedOrder
 from wtforms_sqlalchemy.fields import QuerySelectField
 from flask_admin.form import ImageUploadField
 from ecommerce.users.models import User
@@ -110,3 +110,4 @@ admin.add_view(CategoriesModelView(Categories, db.session))
 admin.add_view(ProductsModelView(Products, db.session))
 admin.add_view(CartItemModelView(CartItem, db.session))
 admin.add_view(CartModelView(Cart, db.session))
+admin.add_view(ModelView(PlacedOrder, db.session))

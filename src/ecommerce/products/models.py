@@ -9,7 +9,7 @@ from flask import url_for, current_app
 from werkzeug.utils import secure_filename
 import uuid
 from werkzeug.datastructures import FileStorage
-
+import string, random
 
 # CATEGORIES MODEL ------------------>>>
 
@@ -107,6 +107,7 @@ class Cart(db.Model, UserMixin):
     
 
 class ShippingAddress(db.Model, UserMixin):
+    __tablename__ = 'shipping_address'    
     id = db.Column(db.Integer, primary_key=True)
     address = db.Column(db.String(50), nullable=False)
     city = db.Column(db.String(25), nullable=False)
@@ -120,6 +121,43 @@ class ShippingAddress(db.Model, UserMixin):
 
     def __repr__(self):
         return f"{self.address},{self.city},{self.state},{self.zip_code},{self.phone}"
+
+
+
+
+class PlacedOrder(db.Model, UserMixin):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user = db.relationship('User', backref=db.backref('placed_orders', lazy=True))
+    order_id = db.Column(db.String(6), nullable=False, unique=True)
+    shipping_address_id = db.Column(db.Integer, db.ForeignKey('shipping_address.id'), nullable=False)
+    shipping_address = db.relationship('ShippingAddress', backref=db.backref('placed_orders', lazy=True))
+    created_at = db.Column(db.DateTime, default=datetime.now)
+    updated_at = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)
+
+    def __init__(self, **kwargs):
+        super(PlacedOrder, self).__init__(**kwargs)
+        self.order_id = self.generate_order_id()
+
+    def generate_order_id(self):
+        return ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
+
+    def __repr__(self):
+        return f"<PlacedOrder {self.order_id}>"
+    
+
+class PlacedOrderItem(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    order_id = db.Column(db.Integer, db.ForeignKey('placed_order.id'), nullable=False)
+    order = db.relationship('PlacedOrder', backref=db.backref('items', lazy=True))
+    product_id = db.Column(db.Integer, db.ForeignKey('products.id'), nullable=False)
+    product = db.relationship('Products', backref=db.backref('order_items', lazy=True))
+    quantity = db.Column(db.Integer, nullable=False)
+    oder_item_price = db.Column(db.Float, nullable=False)
+
+    def __repr__(self):
+        return f"<PlacedOrderItem {self.product.title} x {self.quantity}>"
+
     
 
 
