@@ -20,7 +20,7 @@ class ProductsModelView(ModelView):
     # Add a QuerySelectField to the form for categories
     form_extra_fields = {
         'category': QuerySelectField('Category', query_factory=category_query, allow_blank=False, get_label='name'),
-        'image': ImageUploadField('Image', base_path='ecommerce/static/product/images')
+        'image': ImageUploadField('Image', base_path='src/ecommerce/static/product/images')
     }
 
     # To exclude 'category_id' from the form (since we use 'category' instead)

@@ -1,7 +1,8 @@
-from flask import Blueprint, render_template, redirect, url_for, flash
-from .models import Products, Cart, CartItem
+from flask import Blueprint, render_template, redirect, url_for, flash, request
+from .models import Products, Cart, CartItem, ShippingAddress
 from flask_login import login_required, current_user
 from ecommerce import db
+from .forms import ShippingAddressForm
 
 
 
@@ -21,6 +22,7 @@ def product_details(slug):
 @products_bp.route('/add-to-cart/<slug>')
 @login_required
 def add_to_cart(slug):
+    # retrive user cart or crete to add product or item to the cart
     user_cart = Cart.query.filter_by(user_id=current_user.id).first()
     if user_cart is None:
         user_cart = Cart(
@@ -28,20 +30,22 @@ def add_to_cart(slug):
         )
         db.session.add(user_cart)
         db.session.commit()
-    print(user_cart)
+    # print(user_cart)
+
+    #targeted product that user want to add in the cart
     product = Products.query.filter_by(slug=slug).first_or_404()
+
+    #check if the product already added to the cart if not then added to cart
     existing_cart_item = CartItem.query.filter_by(cart_id=user_cart.id ,product_id=product.id).first()
     if existing_cart_item:
-        print('existing cart', existing_cart_item)
-        existing_cart_item.quantity = +1
+        existing_cart_item.quantity = existing_cart_item.quantity +1
     else:
         cart_items = CartItem(
             product_id=product.id,
             cart_id = user_cart.id
         )
         db.session.add(cart_items)
-        db.session.commit()
-        print('New cart items', cart_items)
+    db.session.commit()
     return redirect(url_for('products_bp.user_cart'))
 
 
@@ -72,3 +76,87 @@ def remove_cartItem(slug):
     db.session.commit()
     flash('Your cart item removed!!!', 'info')
     return redirect(url_for('products_bp.user_cart'))
+
+
+def save_shipping_address(addressForm):
+    new_address = ShippingAddress(
+        address= addressForm.address.data,
+        city = addressForm.city.data,
+        state=addressForm.state.data,
+        zip_code=addressForm.zip_code.data,
+        phone=addressForm.phone.data,
+        user_id = current_user.id
+    )
+    db.session.add(new_address)
+    db.session.commit()
+    return new_address
+
+def user_saved_shipping_addresses():
+    addresses = ShippingAddress.query.filter_by(user_id=current_user.id)
+    return addresses
+
+@products_bp.route('/edit-shipping-address/<int:address_id>', methods=['GET', 'POST'])
+@login_required
+def edit_shipping_address(address_id):
+    address = ShippingAddress.query.get_or_404(address_id)
+    form = ShippingAddressForm(obj=address)
+
+    if form.validate_on_submit():
+        form.populate_obj(address)
+        db.session.commit()
+        flash(f"Shipping Address Edited Successfully!!!", 'success')
+        return redirect(url_for('products_bp.chekout'))
+
+    return render_template('products/edit_shipping_address.html', form=form)
+
+
+@products_bp.route('/delete-shipping-address/<int:address_id>', methods=['GET', 'POST'])
+@login_required
+def delete_shipping_address(address_id):
+    address = ShippingAddress.query.get_or_404(address_id)
+    db.session.delete(address)
+    db.session.commit()
+    return redirect(url_for('products_bp.chekout'))
+
+
+@products_bp.route('/chekout', methods=['GET', 'POST'])
+@login_required
+def chekout():
+    # Retrieve cart products
+    cart = Cart.query.filter_by(user_id=current_user.id).first()
+    if cart is None:
+        cart = Cart(user_id=current_user.id)
+        db.session.add(cart)
+        db.session.commit()
+
+    cart_items = CartItem.query.filter_by(cart_id=cart.id).all()
+    cart_total = cart.get_cart_total_price()  # Assuming this method exists
+
+    user_addresses = user_saved_shipping_addresses()
+
+    form = ShippingAddressForm()
+
+
+    if request.method == 'POST':
+        selected_address_id = request.form.get('selected_address')
+        print("Seleceted aaddress Id-------->>>>>",selected_address_id)
+        if selected_address_id:
+            selected_address = ShippingAddress.query.get(selected_address_id)
+            if selected_address:
+                # Handle the selected address (e.g., save to order, proceed to payment)
+                flash('Proceeding with selected address', 'success')
+                # return redirect(url_for('products_bp.payment', address_id=selected_address_id))
+
+    if form.validate_on_submit():
+        address_obj = save_shipping_address(form)
+        print(address_obj)
+        flash('New address saved and proceeding to payment', 'success')
+        # return redirect(url_for('products_bp.payment', address_id=address_obj.id))
+
+    return render_template('products/chekout.html', 
+                           title='Checkout',
+                           cart_items=cart_items,
+                           cart_total=cart_total, 
+                           form=form,
+                           user_addresses=user_addresses
+                           )

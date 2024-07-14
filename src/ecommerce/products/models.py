@@ -104,6 +104,25 @@ class Cart(db.Model, UserMixin):
 
     def get_cart_total_price(self):
         return sum(item.product.price * item.quantity for item in self.items)
+    
+
+class ShippingAddress(db.Model, UserMixin):
+    id = db.Column(db.Integer, primary_key=True)
+    address = db.Column(db.String(50), nullable=False)
+    city = db.Column(db.String(25), nullable=False)
+    state = db.Column(db.String(25), nullable=False)
+    zip_code = db.Column(db.Integer, nullable=False)
+    phone = db.Column(db.Integer, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user = db.relationship('User', backref=db.backref('shippingaddress',lazy=True))
+    created_at = db.Column(db.DateTime, default=datetime.now)
+    updated_at = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)
+
+    def __repr__(self):
+        return f"{self.address},{self.city},{self.state},{self.zip_code},{self.phone}"
+    
+
+
 
     
 
