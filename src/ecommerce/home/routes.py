@@ -1,7 +1,6 @@
-from flask import Blueprint, render_template
-from ecommerce.products.models import Products
+from flask import Blueprint, render_template, request
+from ecommerce.products.models import Products, PlacedOrder
 from flask_login import login_required, current_user
-from ecommerce.products.models import PlacedOrder, PlacedOrderItem
 
 home_bp = Blueprint('home_bp',__name__)
 
@@ -22,3 +21,14 @@ def user_dashboard():
                            placed_oders=placed_oders,
                            total_price = total_price
                            )
+
+
+@home_bp.route('/search-product/', methods=['GET'])
+def search_product():
+    query = request.args.get('query')
+    if query:
+        results = Products.query.filter(Products.title.ilike(f'%{query}%')).all()
+    else:
+        results = []
+
+    return render_template('home/search_results.html', query=query, results=results)

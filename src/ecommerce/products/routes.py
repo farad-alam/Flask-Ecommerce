@@ -62,6 +62,7 @@ def user_cart():
         db.session.commit()
 
     cart_items = CartItem.query.filter_by(cart_id=cart.id)
+    # print(cart_items)
     cart_total = cart.get_cart_total_price()
     return render_template('products/cart-items.html',cart_items=cart_items, title='Cart Items',cart_total=cart_total)
 
@@ -110,13 +111,31 @@ def edit_shipping_address(address_id):
     return render_template('products/edit_shipping_address.html', form=form)
 
 
+# @products_bp.route('/delete-shipping-address/<int:address_id>', methods=['GET', 'POST'])
+# @login_required
+# def delete_shipping_address(address_id):
+#     address = ShippingAddress.query.get_or_404(address_id)
+#     db.session.delete(address)
+#     db.session.commit()
+#     return redirect(url_for('products_bp.chekout'))
+
+
 @products_bp.route('/delete-shipping-address/<int:address_id>', methods=['GET', 'POST'])
 @login_required
 def delete_shipping_address(address_id):
     address = ShippingAddress.query.get_or_404(address_id)
+    placed_orders_using_address = PlacedOrder.query.filter_by(shipping_address_id=address.id).count()
+    
+    if placed_orders_using_address > 0:
+        flash('This address is being used in an order and cannot be deleted.', 'danger')
+        return redirect(url_for('products_bp.chekout'))
+    
     db.session.delete(address)
     db.session.commit()
+    flash('Address deleted successfully.', 'success')
     return redirect(url_for('products_bp.chekout'))
+
+
 
 
 
@@ -178,6 +197,8 @@ def chekout():
                 placed_order = placed_order_from_cart_items(cart_items, selected_address, current_user)
                 flash(f'Your Order Placed, Order Id {placed_order.order_id}', 'success')
                 return redirect(url_for('home_bp.home'))
+        else:
+            flash('Please Selsect a Shipping Address', 'info')
 
     return render_template('products/chekout.html', 
                            title='Checkout',

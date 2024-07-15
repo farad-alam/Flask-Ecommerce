@@ -35,7 +35,7 @@
             <h1>{{ product.title }}</h1>
             <p class="price">${{ product.price }}</p>
             <p>{{ product.product_desc }}</p>
-            <button class="btn add-to-cart-btn">Add to Cart</button>
+            <a href="{{ url_for('products_bp.add_to_cart', slug=product.slug) }}" class="btn add-to-cart-btn">Add to Cart</a>
         </div>
     </div>
     <div class="row mt-5">

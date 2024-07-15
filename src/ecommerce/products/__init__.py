@@ -1,6 +1,6 @@
 from flask_admin.contrib.sqla import ModelView
 from ecommerce import admin, db
-from .models import Categories, Products, CartItem, Cart, PlacedOrder
+from .models import Categories, Products, CartItem, Cart, PlacedOrder, PlacedOrderItem
 from wtforms_sqlalchemy.fields import QuerySelectField
 from flask_admin.form import ImageUploadField
 from ecommerce.users.models import User
@@ -104,10 +104,22 @@ class CartItemModelView(ModelView):
         self.session.commit()
         return model
 
+class PlacedOrderAdminView(ModelView):
+    column_list = ('order_id', 'user.username', 'shipping_address.address')
+    form_columns = ('order_id', 'user', 'shipping_address')
+
+class PlacedOrderItemAdminView(ModelView):
+    column_list = ('order_id', 'product.title', 'quantity', 'oder_item_price')
+    form_columns = ('order', 'product', 'quantity', 'oder_item_price')
+
+
+
 
 # Add the custom model view to the admin
 admin.add_view(CategoriesModelView(Categories, db.session))
 admin.add_view(ProductsModelView(Products, db.session))
 admin.add_view(CartItemModelView(CartItem, db.session))
 admin.add_view(CartModelView(Cart, db.session))
-admin.add_view(ModelView(PlacedOrder, db.session))
+# admin.add_view(ModelView(PlacedOrder, db.session))
+admin.add_view(PlacedOrderAdminView(PlacedOrder, db.session))
+admin.add_view(PlacedOrderItemAdminView(PlacedOrderItem, db.session))

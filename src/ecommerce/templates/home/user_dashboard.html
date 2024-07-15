@@ -3,6 +3,11 @@
 {% block content %}
 <div class="placed_order">
     <h3 class='mb-5'>Placed Order Details:</h3>
+    
+    {% if not placed_oders[0] %}
+        <h5>You Have not Placed any Order Yet</h5>
+    {% endif %}
+        
     {% for placed_oder in placed_oders %}
     <div class="table-responsive row">
         <div class="products col-sm-8">
