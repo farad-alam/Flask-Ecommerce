@@ -1,0 +1,61 @@
+{% extends "base/base.html" %} 
+
+{% block content %}
+<div class="placed_order">
+    <h3 class='mb-5'>Placed Order Details:</h3>
+    
+    {% if not placed_oders[0] %}
+        <h5>You Have not Placed any Order Yet</h5>
+    {% endif %}
+        
+    {% for placed_oder in placed_oders %}
+    <div class="table-responsive row">
+        <div class="products col-sm-8">
+            <table class="table table-info">
+                <thead>
+                    <tr>
+                        <th scope="col">Image</th>
+                        <th scope="col">Title</th>
+                        <th scope="col">Quantity</th>
+                        <th scope="col">Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% set order_total = 0 %}
+                    {% for item in placed_oder.items %}
+                    
+                    <tr class="">
+                        <td scope="row">
+                            <img src="{{ item.product.image }}" alt="{{ item.product.title }}" height='50px' width='50px'>    
+                        </td>
+                        <td>{{ item.product.title }}</td>
+                        <td>{{ item.quantity }}</td>
+                        <td>{{ item.oder_item_price }}</td>
+                    </tr>
+                    {% set order_total = order_total + item.oder_item_price %}
+                    {{  order_total }}
+                    {% endfor %}
+                    <tr>
+                        <td colspan="4" class="text-right">
+                            <strong>Total Price: {{ order_total }}</strong>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="address col-sm-4 bg-light">
+            <h5>Order ID: {{ placed_oder.order_id }}</h5>
+            <p>
+                Shipping Address:<br>
+                Address: {{ placed_oder.shipping_address.address }} <br>
+                City: {{ placed_oder.shipping_address.city }} | State: {{ placed_oder.shipping_address.state }} <br>
+                Zip Code: {{ placed_oder.shipping_address.zip_code }} | Phone: {{ placed_oder.shipping_address.phone }}            
+            </p>
+        </div>
+    </div>
+    <br>
+    <hr>
+    {% endfor %}
+</div>
+{% endblock content %}

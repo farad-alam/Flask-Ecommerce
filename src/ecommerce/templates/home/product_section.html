@@ -1,0 +1,36 @@
+<section class="py-5">
+    <div class="container">
+      <div class="row row-cols-1 row-cols-md-4 g-4">
+        
+        {% for product in products %}
+          
+            <div class="col-4">
+              <div class="card h-100">
+                <img src="{{ product.image }}" class="card-img-top" alt="{{product.image}}">
+                <div class="card-body">
+                  <a href="{{ url_for('products_bp.product_details', slug=product.slug) }}">
+                    <h5 class="card-title">{{product.title}}</h5>
+
+                  </a>
+
+                  <p class="card-text">${{product.price}}</p>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                      <i class="fas fa-star text-warning"></i>
+                      <i class="fas fa-star text-warning"></i>
+                      <i class="fas fa-star text-warning"></i>
+                      <i class="fas fa-star text-warning"></i>
+                      <i class="fas fa-star-half-alt text-warning"></i>
+                      <span>(42)</span>
+                    </div>
+                    <a class="btn btn-primary" href="{{ url_for('products_bp.add_to_cart', slug=product.slug) }}">Add to Cart</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+        {% endfor %}
+
+        <!-- Add more product cards here -->
+      </div>
+    </div>
+  </section>

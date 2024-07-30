@@ -1,0 +1,67 @@
+{% extends "base/base.html" %}
+
+
+
+{% block content %}
+    <div
+        class="table-responsive"
+    >
+        <table
+            class="table table-primary"
+        >
+            <thead>
+                <tr>
+                    <th scope="col">Image</th>
+                    <th scope="col">Title</th>
+                    <th scope="col">Quantity</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">Action</th>
+                    
+                </tr>
+            </thead>
+            <tbody>
+                
+                {% for cart_item in cart_items %}
+                    <tr class="">
+                        <td scope="row">
+                            <img
+                                src="{{cart_item.product.image}}"
+                                class="img-fluid rounded-top"
+                                alt=""
+                                width='100px'
+                                height='100px'
+                            />
+                            
+                        </td>
+                        <td>{{cart_item.product.title}}</td>
+                        <td>{{cart_item.quantity}}</td>
+                        <td>{{cart_item.get_cart_item_total_price()}}</td>
+                        <td><a class='btn btn-danger' href="{{ url_for('products_bp.remove_cartItem', slug=cart_item.product.slug) }}">Remove -</a></td>
+                    </tr>
+                {% endfor %}
+                <tr class='fw-bold'>
+                    <td>Total Price</td>
+                    <td></td>
+                    <td></td>
+                    <td>
+                        {{cart_total}}
+                    </td>
+                    <td></td>
+                </tr>
+
+            </tbody>
+        </table>
+        
+        {% if cart_items[0] %}
+            <div class="my-2">
+                <a class='btn btn-primary' href="{{ url_for('products_bp.chekout') }}">Checkout</a>
+            </div>
+            {% else %}
+            <h4>Your Cart is Empty</h4>
+        {% endif %}
+            
+
+    </div>
+    
+{% endblock content %}
+    
