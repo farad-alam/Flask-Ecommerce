@@ -1,0 +1,50 @@
+{% extends "base/base.html" %}
+
+
+{% block content %}
+<div class='d-flex justify-content-center'>
+    <div class="container row bg-light">
+        <div class="col-8">
+            <h1 class="mt-5">Edit Your Profile Details</h1>
+
+        <form method="POST" enctype="multipart/form-data">
+
+            {{ form.hidden_tag() }}
+            <div class="form-group mt-2">
+                {{ form.username.label(class="form-label") }}
+                {{ form.username(class="form-control") }}
+                {% for error in form.username.errors %}
+                    <div class="alert alert-danger mt-1">{{ error }}</div>
+                {% endfor %}
+            </div>
+            <div class="form-group mt-2">
+                {{ form.email.label(class="form-label") }}
+                {{ form.email(class="form-control") }}
+                {% for error in form.email.errors %}
+                    <div class="alert alert-danger mt-1">{{ error }}</div>
+                {% endfor %}
+            </div>
+            
+            <div class="form-group mt-2">
+                {{ form.image.label(class="form-label") }}
+                {{ form.image(class="form-control-file") }}
+                {% for error in form.image.errors %}
+                    <div class="alert alert-danger mt-1">{{ error }}</div>
+                {% endfor %}
+            </div>
+           
+            <div class="form-group mt-2">
+                {{ form.submit(class="btn btn-primary") }}
+                <a href="{{ url_for('user_bp.user_account') }}"></a>
+            </div>
+        </form>
+        </div>
+        <div class="col-4">
+            <h2>Sidebar Goes here</h2>
+        </div>
+        
+    </div>
+</div>
+
+{% endblock content %}
+    

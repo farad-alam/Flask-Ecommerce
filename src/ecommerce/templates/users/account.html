@@ -1,0 +1,64 @@
+{% extends "base/base.html" %}
+
+
+{% block content %}
+<div class='d-flex justify-content-center'>
+    <div class="container row bg-light">
+        <div class="col-8">
+            <h1 class="mt-5"> Here is you account details {{ current_user.username }}</h1>
+
+            <div class="row ">
+                <div class="col-auto">
+                    
+                    {% if current_user.profile_pic %}
+                    <img src="{{ url_for('static', filename='profile_pics/' ~ current_user.profile_pic) }}" alt="Profile Picture" class="rounded-circle profile-picture">
+                    {% else %}
+                        <img src="https://picsum.photos/id/25/100/100" alt="Profile Picture" class="rounded-circle profile-picture">
+                    {% endif %}
+                        
+                </div>
+            </div>
+
+            <hr>
+
+            <div class="d-flex justify-content-between align-items-center">
+                <h4 class="fw-bold">Profile Details</h4>
+                <a href="{{ url_for('user_bp.user_account_edit', user_id=current_user.id) }}" class="btn btn-primary">
+                    <i class="fas fa-edit"></i> Edit Profile
+                </a>
+            </div>
+            <div
+                class="table-responsive"
+            >
+                <table
+                    class="table table-light"
+                >
+                    <thead>
+
+                    </thead>
+                    <tbody class="fw-bold">
+                        <tr >
+                            <td scope="row">Username:</td>
+                            <td>{{current_user.username}}</td>
+                           
+                        </tr>
+                        <tr class="">
+                            <td scope="row">Email:</td>
+                            <td>{{current_user.email}}</td>
+                            
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+        
+        </div>
+        <div class="col-4">
+            <h2>Sidebar Goes here</h2>
+        </div>
+        
+    </div>
+</div>
+
+{% endblock content %}
+    

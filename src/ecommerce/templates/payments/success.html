@@ -1,0 +1,38 @@
+{% extends "base/base.html" %}
+
+{% block content %}
+
+<h1>Payment Success</h1>
+
+<h3>We have Succesfully Receved ${{ amount_received }} !</h3>
+
+{% if cart_items %}
+
+        <div
+            class="table-responsive"
+        >
+            <table
+                class="table table-primary"
+            >
+                <thead>
+                    <tr>
+                        <th scope="col">Title</th>
+                        <th scope="col">Quantity</th>
+                        <th scope="col">Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                        {% for cart_item in cart_items %}
+                        <tr class="">
+                            <td>{{ cart_item.product.title }}</td>
+                            <td>{{ cart_item.quantity }}</td>
+                            <td>{{ cart_item.get_cart_item_total_price() }}</td>
+                        </tr>
+                        {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+{% endif %}
+
+{% endblock content %}

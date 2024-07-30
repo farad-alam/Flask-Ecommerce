@@ -1,0 +1,6 @@
+venv/
+.env
+src/instance/
+src/ecommerce/static/
+src/migrations/
+src/ecommerce/templates/test.html

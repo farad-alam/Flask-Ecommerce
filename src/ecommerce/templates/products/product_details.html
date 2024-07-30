@@ -1,0 +1,50 @@
+{% extends "base/base.html" %}
+
+
+{% block customStyle %}
+.product-page {
+    margin-top: 50px;
+}
+.product-image {
+    max-width: 100%;
+    height: auto;
+}
+.product-info {
+    padding-left: 20px;
+}
+.price {
+    font-size: 24px;
+    color: #b12704;
+}
+.add-to-cart-btn {
+    background-color: #ffa41c;
+    border: none;
+    color: white;
+}
+{% endblock customStyle %}
+    
+
+
+{% block content %}
+<div class="container product-page">
+    <div class="row">
+        <div class="col-md-6">
+            <img src="{{ product.image }}" class="product-image" alt="{{ product.title }}">
+        </div>
+        <div class="col-md-6 product-info">
+            <h1>{{ product.title }}</h1>
+            <p class="price">${{ product.price }}</p>
+            <p>{{ product.product_desc }}</p>
+            <a href="{{ url_for('products_bp.add_to_cart', slug=product.slug) }}" class="btn add-to-cart-btn">Add to Cart</a>
+        </div>
+    </div>
+    <div class="row mt-5">
+        <div class="col">
+            <h3>Product Details</h3>
+            <p>{{ product.product_desc }}</p>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
+    
