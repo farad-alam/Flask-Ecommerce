@@ -3,7 +3,7 @@ import stripe
 import json
 import os
 from dotenv import load_dotenv
-from ecommerce.products.models import Cart, PlacedOrder, CartItem
+from ecommerce.products.models import Cart, CartItem
 from flask_login import current_user, login_required
 from sqlalchemy.orm import lazyload
 
@@ -50,7 +50,7 @@ def get_cart_details_by_user():
 
 @payments_bp.route('/success')
 @login_required
-def success():
+def payment_success():
     # client_secret = request.args.get("payment_intent_client_secret")
     try:
         intent_id = request.args.get("payment_intent")
@@ -77,3 +77,22 @@ def success():
         # cart_items = json.dumps(cart_items)
         flash("You are sending invalid request, please make a payment first",'info')
         return render_template('payments/success.html', title="Payment Success", amount_received="Invalid Request")
+
+@payments_bp.route('/test')
+def retrive_or_create_stripe_customer(user_obj=current_user):
+
+    user = stripe.Customer.search(query=f"email:'{current_user.email}'")
+    if user['data']:
+        print('EXISTING USER ID --->>> ',user['data'][0]['id'])
+        return render_template('test.html', data=user['data'])
+    else:
+        user = stripe.Customer.create(
+            name=current_user.first_name,
+            email=current_user.email
+        )
+        print('NEW USER iS --->>>', user['id'])
+        return render_template('test.html', data=user)
+    
+def sumMath(a,s):
+    print('this is sum')
+    return a+s
