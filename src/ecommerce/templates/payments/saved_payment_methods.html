@@ -1,0 +1,37 @@
+{% extends "base/base.html" %}
+
+
+{% block content %}
+
+<div class="container">
+
+    <div class="payment-cards">
+        <h2>Your saved cards: pay with which one you want</h2>
+            {% if payment_methods %}
+                {% for method in payment_methods %}
+                <div class="row mt-5">
+                    <h6>Card {{loop.index}}</h6>
+                    <div class="col-sm-3 bg-warning fw-bold text-white p-3 rounded">
+                        <h3>{{ method.card.display_brand | title }}</h3>
+                        <h4>**** **** **** {{method.card.last4}}</h4>
+                        <h5>Exp: {{method.card.exp_month}}/{{method.card.exp_year}}</h5>
+                    </div>
+                    
+                    <div class="pay-button mt-2">
+                        <a href="{{ url_for('payments_bp.pay_with_existing_card', cus_id=method.customer, pm_id=method.id ) }}" class="btn btn-danger rounded">Pay wiht Card{{loop.index}} **** {{method.card.last4}}</a>
+                    </div>
+                </div>
+                
+
+                {% endfor %}
+            {% else %}
+            <h3> You have not added any payment methods yet</h3>
+
+            {% endif %}
+
+
+    </div>
+
+</div>
+  
+{% endblock content %}
