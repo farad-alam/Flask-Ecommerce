@@ -1,6 +1,7 @@
 venv/
 .env
 src/test.py
+src/task.txt
 src/instance/
 src/ecommerce/static/
 src/migrations/

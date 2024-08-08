@@ -1,16 +1,17 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, request
+from flask import Blueprint, render_template, redirect, url_for, flash, request, session
 from .models import Products, Cart, CartItem, ShippingAddress, PlacedOrder, PlacedOrderItem
 from flask_login import login_required, current_user
 from ecommerce import db
 from .forms import ShippingAddressForm
+from ecommerce.payments.routes import retrieve_stripe_saved_payment_methods_by_customer_id
 
 
 
 products_bp = Blueprint('products_bp', __name__, url_prefix='/product')
 
-@products_bp.route('/products')
-def products():
-    return "this is products"
+# @products_bp.route('/products')
+# def products():
+#     return "this is products"
 
 @products_bp.route('/product-details/<slug>')
 def product_details(slug):
@@ -139,34 +140,6 @@ def delete_shipping_address(address_id):
 
 
 
-
-def placed_order_from_cart_items(cart_items, shipping_address, user):
-    new_placed_order = PlacedOrder(
-        user_id = user.id,
-        user = user,
-        shipping_address_id = shipping_address.id
-    )
-    db.session.add(new_placed_order)
-    # db.session.commit()
-
-    for items in cart_items:
-        new_placed_order_item = PlacedOrderItem(
-            order_id = new_placed_order.id,
-            order = new_placed_order,
-            product_id = items.product_id,
-            product = items.product,
-            quantity = items.quantity,
-            oder_item_price = items.get_cart_item_total_price()
-        )
-        db.session.add(new_placed_order_item)
-        db.session.delete(items)
-    db.session.commit()
-    
-    return new_placed_order
-
-
-
-
 @products_bp.route('/chekout', methods=['GET', 'POST'])
 @login_required
 def chekout():
@@ -191,14 +164,24 @@ def chekout():
 
     if request.method == 'POST':
         selected_address_id = request.form.get('selected_address')
+        
         if selected_address_id:
-            selected_address = ShippingAddress.query.get(selected_address_id)
-            if selected_address:
-                placed_order = placed_order_from_cart_items(cart_items, selected_address, current_user)
-                flash(f'Your Order Placed, Order Id {placed_order.order_id}', 'success')
-                return redirect(url_for('home_bp.home'))
+            session[f"{current_user.id}_selected_address_id"] = selected_address_id
+
+            payment_methods = retrieve_stripe_saved_payment_methods_by_customer_id()
+            if payment_methods:
+                return redirect(url_for('payments_bp.saved_payment_methods'))
+            else:
+                return redirect(url_for('payments_bp.payment_info'))
         else:
             flash('Please Selsect a Shipping Address', 'info')
+
+            # selected_address = ShippingAddress.query.get(selected_address_id)
+            # if selected_address:
+            #     placed_order = placed_order_from_cart_items(cart_items, selected_address, current_user)
+            #     flash(f'Your Order Placed, Order Id {placed_order.order_id}', 'success')
+            #     return redirect(url_for('home_bp.home'))
+
 
     return render_template('products/chekout.html', 
                            title='Checkout',
