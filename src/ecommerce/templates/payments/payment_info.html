@@ -4,14 +4,40 @@
 
 <div class="container">
     <div class="row">
-        <div class="col-sm-8">
-            <h3>Cart Details Here</h3>
+        <div class="col-sm-6">
+            <h3>Product you have selected</h3>
+            {% if cart_items %}
+            
+                <div class="table-responsive">
+                    <table class="table table-primary">
+                        <thead>
+                            <tr>
+                                <th scope="col">Title</th>
+                                <th scope="col">Quantity</th>
+                                <th scope="col">Price</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for cart_item in cart_items %}
+                            <tr class="">
+                                <td>{{ cart_item.product.title }}</td>
+                                <td>{{ cart_item.quantity }}</td>
+                                <td>{{ cart_item.get_cart_item_total_price() }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endif %}
+            <p class="h5 fw-bold" >Total Payable ${{cart_items[0].cart.get_cart_total_price()}}</p>
         </div>
-        <div class="col-sm 4">
+
+        <div class="col-sm-6">
             <form id="payment-form">
                 <input type="hidden" id="csrf-token" value="{{ csrf_token() }}">
                 <div id="payment-element">
                     <!--Stripe.js injects the Payment Element-->
+                    <p>Loading.....</p>
                 </div>
                 <button id="submit">
                     <div class="spinner hidden" id="spinner"></div>

@@ -5,8 +5,10 @@
 <h1>Payment Success</h1>
 
 <h3>We have Succesfully Receved ${{ amount_received }} !</h3>
+<hr>
+<h4>Your Odered Items:</h4>
 
-{% if cart_items %}
+{% if placed_order_items %}
 
         <div
             class="table-responsive"
@@ -22,11 +24,11 @@
                     </tr>
                 </thead>
                 <tbody>
-                        {% for cart_item in cart_items %}
+                        {% for placed_order_item in placed_order_items %}
                         <tr class="">
-                            <td>{{ cart_item.product.title }}</td>
-                            <td>{{ cart_item.quantity }}</td>
-                            <td>{{ cart_item.get_cart_item_total_price() }}</td>
+                            <td>{{ placed_order_item.product.title }}</td>
+                            <td>{{ placed_order_item.quantity }}</td>
+                            <td>{{ placed_order_item.oder_item_price }}</td>
                         </tr>
                         {% endfor %}
                 </tbody>
