@@ -1,6 +1,8 @@
 venv/
 .env
 src/test.py
+src/__pycache__
+__pycache__
 src/task.txt
 src/instance/
 src/ecommerce/static/

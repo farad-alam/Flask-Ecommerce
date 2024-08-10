@@ -1,5 +1,4 @@
-from ecommerce import app, db
-
+from config import app, db
 
 
 if __name__ == "__main__":
