@@ -9,7 +9,7 @@
         <table
             class="table table-primary"
         >
-            <thead>
+            <thead class="text-center">
                 <tr>
                     <th scope="col">Image</th>
                     <th scope="col">Title</th>
@@ -34,17 +34,17 @@
                             
                         </td>
                         <td>{{cart_item.product.title}}</td>
-                        <td>{{cart_item.quantity}}</td>
-                        <td>{{cart_item.get_cart_item_total_price()}}</td>
-                        <td><a class='btn btn-danger' href="{{ url_for('products_bp.remove_cartItem', slug=cart_item.product.slug) }}">Remove -</a></td>
+                        <td class="text-center">{{cart_item.quantity}}</td>
+                        <td class="text-center">${{cart_item.get_cart_item_total_price()}}</td>
+                        <td class="text-center"><a class='btn btn-danger' href="{{ url_for('products_bp.remove_cartItem', slug=cart_item.product.slug) }}">Remove -</a></td>
                     </tr>
                 {% endfor %}
                 <tr class='fw-bold'>
                     <td>Total Price</td>
                     <td></td>
                     <td></td>
-                    <td>
-                        {{cart_total}}
+                    <td class="text-center">
+                        ${{cart_total}}
                     </td>
                     <td></td>
                 </tr>

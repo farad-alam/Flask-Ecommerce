@@ -21,8 +21,8 @@
                             {% for cart_item in cart_items %}
                             <tr class="">
                                 <td>{{ cart_item.product.title }}</td>
-                                <td>{{ cart_item.quantity }}</td>
-                                <td>{{ cart_item.get_cart_item_total_price() }}</td>
+                                <td class="text-center">{{ cart_item.quantity }}</td>
+                                <td class="text-center">${{ cart_item.get_cart_item_total_price() }}</td>
                             </tr>
                             {% endfor %}
                         </tbody>

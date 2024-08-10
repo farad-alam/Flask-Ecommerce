@@ -142,7 +142,8 @@ class PlacedOrder(db.Model, UserMixin):
     shipping_address = db.relationship('ShippingAddress', backref=db.backref('placed_orders', lazy=True))
     created_at = db.Column(db.DateTime, default=datetime.now)
     updated_at = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)
-
+    items = db.relationship('PlacedOrderItem', backref='placed_order', lazy=True, cascade='all, delete-orphan')
+    
     def __init__(self, **kwargs):
         super(PlacedOrder, self).__init__(**kwargs)
         self.order_id = self.generate_order_id()
@@ -150,6 +151,9 @@ class PlacedOrder(db.Model, UserMixin):
     def generate_order_id(self):
         return ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
 
+    def get_placed_order_total_price(self):
+        return sum(item.product.price * item.quantity for item in self.items)
+    
     def __repr__(self):
         return f"<PlacedOrder {self.order_id}>"
     
@@ -157,7 +161,7 @@ class PlacedOrder(db.Model, UserMixin):
 class PlacedOrderItem(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     order_id = db.Column(db.Integer, db.ForeignKey('placed_order.id'), nullable=False)
-    order = db.relationship('PlacedOrder', backref=db.backref('items', lazy=True))
+    order = db.relationship('PlacedOrder', backref=db.backref('order_items', lazy=True, ))
     product_id = db.Column(db.Integer, db.ForeignKey('products.id'), nullable=False)
     product = db.relationship('Products', backref=db.backref('order_items', lazy=True))
     quantity = db.Column(db.Integer, nullable=False)
