@@ -21,9 +21,10 @@ def product_details(slug):
 
 
 @products_bp.route('/add-to-cart/<slug>')
-@login_required
 def add_to_cart(slug):
     # retrive user cart or crete to add product or item to the cart
+    if not current_user.is_authenticated:
+        return redirect(url_for('user_bp.user_login'))
     user_cart = Cart.query.filter_by(user_id=current_user.id).first()
     if user_cart is None:
         user_cart = Cart(

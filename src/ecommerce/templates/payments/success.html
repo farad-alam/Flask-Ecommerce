@@ -27,8 +27,8 @@
                         {% for placed_order_item in placed_order_items %}
                         <tr class="">
                             <td>{{ placed_order_item.product.title }}</td>
-                            <td>{{ placed_order_item.quantity }}</td>
-                            <td>{{ placed_order_item.oder_item_price }}</td>
+                            <td class="text-center">{{ placed_order_item.quantity }}</td>
+                            <td class="text-center">${{ placed_order_item.oder_item_price }}</td>
                         </tr>
                         {% endfor %}
                 </tbody>

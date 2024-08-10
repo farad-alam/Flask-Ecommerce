@@ -46,7 +46,7 @@
         <div class="products">
             <div class="table-responsive">
                 <table class="table table-primary">
-                    <thead>
+                    <thead class="text-center">
                         <tr>
                             <th scope="col">Title</th>
                             <th scope="col">Quantity</th>
@@ -57,14 +57,14 @@
                         {% for cart_item in cart_items %}
                             <tr class="">
                                 <td>{{ cart_item.product.title }}</td>
-                                <td>{{ cart_item.quantity }}</td>
-                                <td>{{ cart_item.get_cart_item_total_price() }}</td>
+                                <td class="text-center">{{ cart_item.quantity }}</td>
+                                <td class="text-center">${{ cart_item.get_cart_item_total_price() }}</td>
                             </tr>
                         {% endfor %}
                         <tr class='fw-bold'>
                             <td>Total Price</td>
                             <td></td>
-                            <td>{{ cart_total }}</td>
+                            <td class="text-center">${{ cart_total }}</td>
                         </tr>
                     </tbody>
                 </table>

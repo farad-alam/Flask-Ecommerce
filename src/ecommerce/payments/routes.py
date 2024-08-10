@@ -22,6 +22,11 @@ stripe.api_key = os.getenv('STRIPE_SECRET_KEY')
 @login_required
 def payment_info():
     cart_items = get_cart_details_by_user()
+
+    if cart_items is None:
+        flash('You did not any product on your cart','info')
+        return redirect(url_for('products_bp.user_cart'))
+    
     return render_template('payments/payment_info.html', 
                            title="Payment Info",
                            cart_items = cart_items,
@@ -64,13 +69,16 @@ def create_payment_intent():
 
 def get_cart_details_by_user(types='list'):
     current_user_cart = Cart.query.filter_by(user_id=current_user.id).first()
-    # user_cart_items = CartItem.query.filter_by(cart_id=current_user_cart.id).options(lazyload('*')).all()
-    user_cart_items = CartItem.query.filter_by(cart_id=current_user_cart.id).options(lazyload('*'))
+    user_cart_items = CartItem.query.filter_by(cart_id=current_user_cart.id).options(lazyload('*')).all()
+    # user_cart_items = CartItem.query.filter_by(cart_id=current_user_cart.id).options(lazyload('*'))
     print('on the get Cart func-------------------------------',user_cart_items)
 
-    if user_cart_items is None or (isinstance(user_cart_items, list) or not user_cart_items):
-        return redirect(url_for('products_bp.user_cart'))
+    # if user_cart_items is None or (isinstance(user_cart_items, list) or not user_cart_items):
+    #     return redirect(url_for('products_bp.user_cart'))
 
+    if not user_cart_items:
+        return None
+    
     if types == 'json':
         serialized_user_cart_items = json.dumps([item.to_dict() for item in user_cart_items])
         print(serialized_user_cart_items)
@@ -85,10 +93,14 @@ def payment_success():
     try:
         intent_id = request.args.get("payment_intent")
         cart_items = get_cart_details_by_user()
+        if cart_items is None:
+            flash('You did not any product on your cart','info')
+            return redirect(url_for('products_bp.user_cart'))
         print('Cart Items---------->>>', cart_items)
 
         if cart_items is None or (isinstance(cart_items, list) and not cart_items):
             return redirect(url_for('home_bp.user_cart'))
+        
         # retrieve the intent
         payment_intent_obj = stripe.PaymentIntent.retrieve(intent_id)
         print(payment_intent_obj)
@@ -235,7 +247,7 @@ def placed_order_from_cart_items(cart_items, shipping_address_id, user):
         db.session.add(new_placed_order_item)
         db.session.delete(items)
 
-    print('Olaced order woek succesfully.........................')
+    # print('Placed order woek succesfully.........................')
     db.session.commit()
 
     new_placed_order_items = PlacedOrderItem.query.filter_by(order_id=new_placed_order.id)
@@ -263,7 +275,7 @@ def pay_with_existing_card(cus_id, pm_id):
         cart_items = get_cart_details_by_user()
 
         if cart_items:
-            serialized_user_cart_items = json.dumps([item.to_dict() for item in cart_items])
+            # serialized_user_cart_items = json.dumps([item.to_dict() for item in cart_items])
             user_cart_total_price = int(cart_items[0].cart.get_cart_total_price()*100)
             print(user_cart_total_price)
             payment = stripe.PaymentIntent.create(
