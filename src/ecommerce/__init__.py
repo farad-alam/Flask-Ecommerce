@@ -38,13 +38,19 @@ csrf_token = CSRFProtect(app)
 migrate = Migrate(app, db)
 
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+# sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 
 
-from ecommerce.home.routes import home_bp
-from ecommerce.users.routes import user_bp
-from ecommerce.products.routes import products_bp
-from ecommerce.payments.routes import payments_bp
+from .home.routes import home_bp
+from .users.routes import user_bp
+from .products.routes import products_bp
+from .payments.routes import payments_bp
+
+# from .home.routes import home_bp
+# from .users.routes import user_bp
+# from .products.routes import products_bp
+# from .payments.routes import payments_bp
 
 app.register_blueprint(home_bp)
 app.register_blueprint(user_bp)
