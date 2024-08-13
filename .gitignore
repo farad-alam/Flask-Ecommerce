@@ -9,3 +9,5 @@ src/ecommerce/static/
 src/migrations/
 src/ecommerce/templates/test.html
 instance
+readme.md
+src/src
