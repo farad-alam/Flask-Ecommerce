@@ -287,7 +287,7 @@ def pay_with_existing_card(cus_id, pm_id):
                     payment_method=pm_id,
                     # metadata = {'products': serialized_user_cart_items},
                     # return_url= url_for('payments_bp.payment_success',_external=True),
-                    return_url='http://127.0.0.1:5000/payments/success',
+                    return_url=f"{os.getenv('BASE_URL')}/payments/success",
                     off_session=True,
                     confirm=True,
                 )

@@ -70,6 +70,7 @@
             .querySelector("#payment-form")
             .addEventListener("submit", handleSubmit);
 
+        const BASE_URL = window.location.origin;
         // Fetches a payment intent and captures the client secret
         async function initialize() {
             const csrfToken = document.getElementById('csrf-token').value; // Get CSRF token
@@ -105,7 +106,7 @@
                 elements,
                 confirmParams: {
                     // Make sure to change this to your payment completion page
-                    return_url: "http://127.0.0.1:5000/payments/success",
+                    return_url: `${BASE_URL}/payments/success`,
                 },
             });
 
